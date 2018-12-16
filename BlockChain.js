@@ -28,7 +28,8 @@ class Blockchain {
     // Get block height, it is auxiliar method that return the height of the blockchain
     async getBlockHeight() {
         // Add your code here
-        return await this.bd.getBlocksCount();
+        let blockCount = await this.bd.getBlocksCount();
+        return blockCount -1;
     }
 
     // Add new block

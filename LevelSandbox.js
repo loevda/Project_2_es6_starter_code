@@ -46,7 +46,7 @@ class LevelSandbox {
         let self = this;
         let promise = new Promise(function(resolve, reject){
             // Add your code here, remember un Promises you need to resolve() or reject()
-            let i = -1;
+            let i = 0;
             self.db.createReadStream().on('data', function(data) {
                 i++;
             }).on('error', function(err) {
