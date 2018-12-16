@@ -20,7 +20,7 @@ class LevelSandbox {
                 if (err) {
                     reject(err);
                 }else{
-                    resolve(value);
+                    resolve(JSON.parse(value));
                 }
             })
         });

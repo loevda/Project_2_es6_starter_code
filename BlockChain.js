@@ -34,16 +34,31 @@ class Blockchain {
     // Add new block
     async addBlock(block) {
         // Add your code here
+        let self = this, height = await this.getBlockHeight();
+        await (async () => {
+            if (height > -1) {
+                previousBlock = await self.bd.getLevelDBData(height);
+                block.previousblockhash = previousBlock.hash;
+            }
+        });
     }
 
     // Get Block By Height
     async getBlock(height) {
         // Add your code here
+        return await this.bd.getLevelDBData(height);
     }
 
     // Validate if Block is being tampered by Block Height
     async validateBlock(height) {
         // Add your code here
+        let self = this;
+        const block = await this.getBlock(height);
+        const newBlock = {...block};
+        newBlock.hash = '';
+        newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
+        return await (block.hash === newBlock.hash);
+
     }
 
     // Validate Blockchain
