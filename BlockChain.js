@@ -17,32 +17,37 @@ class Blockchain {
     // You have to options, because the method will always execute when you create your blockchain
     // you will need to set this up statically or instead you can verify if the height !== 0 then you
     // will not create the genesis block
-    generateGenesisBlock(){
+    async generateGenesisBlock(){
         // Add your code here
+        const block = new Block("Genesis block");
+        const height = await getBlockHeight();
+        if (height === -1)
+            this.addBlock(block);
     }
 
     // Get block height, it is auxiliar method that return the height of the blockchain
-    getBlockHeight() {
+    async getBlockHeight() {
         // Add your code here
+        return await this.bd.getBlocksCount();
     }
 
     // Add new block
-    addBlock(block) {
+    async addBlock(block) {
         // Add your code here
     }
 
     // Get Block By Height
-    getBlock(height) {
+    async getBlock(height) {
         // Add your code here
     }
 
     // Validate if Block is being tampered by Block Height
-    validateBlock(height) {
+    async validateBlock(height) {
         // Add your code here
     }
 
     // Validate Blockchain
-    validateChain() {
+    async validateChain() {
         // Add your code here
     }
 
