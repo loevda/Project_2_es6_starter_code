@@ -37,10 +37,14 @@ class Blockchain {
         let self = this, height = await this.getBlockHeight();
         await (async () => {
             if (height > -1) {
-                previousBlock = await self.bd.getLevelDBData(height);
+                let previousBlock = await self.bd.getLevelDBData(height);
                 block.previousblockhash = previousBlock.hash;
             }
         });
+        block.height = height +1;
+        block.time = new Date().getTime().toString().slice(0,-3);
+        block.hash = SHA256(JSON.stringify(newBlock)).toString();
+        return await this.bd.addLevelDBData(block.height, JSON.stringify(block).toString());
     }
 
     // Get Block By Height
@@ -58,12 +62,20 @@ class Blockchain {
         newBlock.hash = '';
         newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
         return await (block.hash === newBlock.hash);
-
     }
 
     // Validate Blockchain
     async validateChain() {
         // Add your code here
+        let self = this, height = await this.getBlockHeight(), errorLog = [];
+        await (async () => {
+            while (i<=height) {
+                let is_valid = await self.validateBlock(i);
+                if(is_valid === false)
+                    errorLog.push({"block": i, "valid": false});
+            }
+        })
+        return errorLog;
     }
 
     // Utility Method to Tamper a Block for Test Validation
