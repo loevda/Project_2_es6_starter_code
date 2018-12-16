@@ -61,4 +61,4 @@ class LevelSandbox {
 
 }
 
-module.exports.LevelSandbox = LevelSandbox;
+module.exports = LevelSandbox;

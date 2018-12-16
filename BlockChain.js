@@ -9,7 +9,7 @@ const Block = require('./Block.js');
 class Blockchain {
 
     constructor() {
-        this.bd = new LevelSandbox.LevelSandbox();
+        this.bd = new LevelSandbox();
         this.generateGenesisBlock();
     }
 
@@ -20,7 +20,7 @@ class Blockchain {
     async generateGenesisBlock(){
         // Add your code here
         const block = new Block("Genesis block");
-        const height = await getBlockHeight();
+        const height = await this.getBlockHeight();
         if (height === -1)
             this.addBlock(block);
     }
@@ -35,15 +35,14 @@ class Blockchain {
     async addBlock(block) {
         // Add your code here
         let self = this, height = await this.getBlockHeight();
-        await (async () => {
-            if (height > -1) {
-                let previousBlock = await self.bd.getLevelDBData(height);
-                block.previousblockhash = previousBlock.hash;
+        if (height > -1) {
+                await self.getBlock(height).then((previousBlock) => {
+                    block.previousblockhash = previousBlock.hash;
+                });
             }
-        });
-        block.height = height +1;
+        block.height = height + 1;
         block.time = new Date().getTime().toString().slice(0,-3);
-        block.hash = SHA256(JSON.stringify(newBlock)).toString();
+        block.hash = SHA256(JSON.stringify(block)).toString();
         return await this.bd.addLevelDBData(block.height, JSON.stringify(block).toString());
     }
 
@@ -67,14 +66,15 @@ class Blockchain {
     // Validate Blockchain
     async validateChain() {
         // Add your code here
-        let self = this, height = await this.getBlockHeight(), errorLog = [];
-        await (async () => {
-            while (i<=height) {
-                let is_valid = await self.validateBlock(i);
-                if(is_valid === false)
+        let self = this, errorLog = [], i= 0;
+        let height = await this.getBlockHeight();
+        while (i<=height) {
+            await self.validateBlock(i).then((res) => {
+                if(res === false)
                     errorLog.push({"block": i, "valid": false});
-            }
-        })
+                i++;
+            });
+        }
         return errorLog;
     }
 
@@ -91,4 +91,4 @@ class Blockchain {
    
 }
 
-module.exports.Blockchain = Blockchain;
+module.exports = Blockchain;
